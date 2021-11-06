@@ -1,0 +1,22 @@
+name: duo_online
+description: an aplication makes it possible to learn english with duo online
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.15.0-162.0.dev <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  assets_audio_player: ^3.0.3+6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
