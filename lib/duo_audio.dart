@@ -1,55 +1,68 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:duo_online/phrase.dart';
 import 'package:duo_online/script.dart';
 import 'package:duo_online/section.dart';
+import 'package:just_audio/just_audio.dart';
 
 class DuoAudio {
   Section _section;
-  int _playingIndex = 0;
-  final AssetsAudioPlayer _player;
+  final AudioPlayer _player;
 
-  DuoAudio(this._section) :  _player = AssetsAudioPlayer.newPlayer() {
-    var number = _section.getPhrase(_playingIndex).phraseNumber;
-    _player.open(
-      Audio('assets/sounds/$number'),
-      autoStart: false,
-      showNotification: true,
-    );
+  static DuoAudio? _instance;
+
+  DuoAudio._internal()
+      : _player = AudioPlayer(),
+        _section = Script().getSection(1) {
+    seekSectionTo(1);
   }
 
-  void play() {
-    stop();
-
-    var phrase = _section.getPhrase(_playingIndex);
-    _player.open(
-      Audio('assets/sounds/${phrase.phraseNumber}'),
-      autoStart: true,
-      showNotification: true,
-    );
+  factory DuoAudio() {
+    _instance ??= DuoAudio._internal();
+    return _instance!;
   }
 
-  void stop() {
-    _player.stop();
+  void onClick() {
+    if (_player.playing) {
+      _player.pause();
+    } else {
+      _player.play();
+    }
   }
 
   void skipNext() {
-    if (_section.isExist(_playingIndex+1)) {
-       _playingIndex++;
-       play();
-
+    if (_section.isExist(_player.currentIndex! + 1)) {
+      _player.seekToNext();
     } else if (_section.isLastSection()) {
-      _playingIndex = 0;
-      _section = Script().getSection(1);
-      stop();
-
+      seekSectionTo(1);
     } else {
-      _playingIndex = 0;
-      _section = Script().getSection(_section.sectionNumber + 1);
-      play();
+      seekSectionTo(_section.sectionNumber + 1);
     }
   }
 
   void skipPrevious() {
+    if (_section.isExist(_player.currentIndex! - 1)) {
+      _player.seekToPrevious();
+    } else if (_section.isFirstSection()) {
+      _player.seekToPrevious(); //再生時間を0に戻す
+    } else {
+      seekSectionTo(_section.sectionNumber - 1);
+    }
+  }
 
+  void seekSectionTo(int number) {
+    _player.pause();
+    _section = Script().getSection(number);
+    var children = _section
+        .getAllPhrase()
+        .map((e) =>
+        AudioSource.uri(Uri.parse('asset:///sounds/${e.phraseNumber}.mp3')))
+        .toList();
+
+    _player.setAudioSource(
+      ConcatenatingAudioSource(
+          useLazyPreparation: false, shuffleOrder: null, children: children),
+      initialIndex: 0,
+      initialPosition: Duration.zero,
+    );
+
+    _player.play();
   }
 }

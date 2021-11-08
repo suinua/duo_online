@@ -5,7 +5,9 @@ import 'section.dart';
 class Script {
   static Script? _instance;
 
-  Script._internal();
+  Script._internal() {
+    fetchData();
+  }
 
   factory Script() {
     _instance ??= Script._internal();
@@ -32,7 +34,8 @@ class Script {
 
   Section getSection(int sectionNumber) {
     assert(0 <= sectionNumber && sectionNumber <= 45);
-    return _sectionList.firstWhere((section) => section.sectionNumber == sectionNumber);
+    return _sectionList.firstWhere((section) =>
+    section.sectionNumber == sectionNumber);
   }
 
   void getSectionList() {
@@ -40,7 +43,7 @@ class Script {
   }
 }
 
-const _scriptRawData = <String, Map<String,Map<String,String>>>{
+const _scriptRawData = <String, Map<String, Map<String, String>>>{
   '1': {
     '1': {
       'jp': '1 個人の意志は尊重しなければいけない。',

@@ -1,39 +1,35 @@
+import 'package:duo_online/duo_audio.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const DuoApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class DuoApp extends StatelessWidget {
+  const DuoApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DUO',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const Home(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class _HomeState extends State<Home> {
+  var _seekbarValue = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +41,50 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Text('English Text'),
+            Text('Japanese Text'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.skip_previous),
+            label: 'back',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_arrow),
+            label: 'play',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.skip_next),
+            label: 'skip',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            DuoAudio().skipPrevious();
+          } else if (index == 1) {
+            DuoAudio().onClick();
+          } else if (index == 2) {
+            DuoAudio().skipNext();
+          }
+        },
+      ),
+      persistentFooterButtons: [
+        Slider(
+          value: _seekbarValue,
+          onChanged: (newValue) {
+            setState(() {
+              _seekbarValue = newValue;
+            });
+          },
+          min: 0,
+          max: 100,
+        ),
+      ],
     );
   }
 }

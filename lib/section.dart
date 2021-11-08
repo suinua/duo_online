@@ -12,9 +12,11 @@ class Section {
     return _phraseList[index];
   }
 
-  bool isExist(int phraseIndex) {
-    assert(0 <= phraseIndex);
+  List<Phrase> getAllPhrase() {
+    return _phraseList;
+  }
 
+  bool isExist(int phraseIndex) {
     return 0 <= phraseIndex && phraseIndex <= (_phraseList.length - 1);
   }
 
@@ -32,5 +34,9 @@ class Section {
 
   bool isLastSection() {
     return sectionNumber == 45;
+  }
+
+  bool isFirstSection() {
+    return sectionNumber == 1;
   }
 }
