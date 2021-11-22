@@ -1,17 +1,26 @@
+import 'dart:async';
+
+import 'package:duo_online/phrase.dart';
 import 'package:duo_online/script.dart';
 import 'package:duo_online/section.dart';
 import 'package:just_audio/just_audio.dart';
 
 class DuoAudio {
   Section _section;
+  StreamController<Phrase> currentPhraseStream;
   final AudioPlayer _player;
 
   static DuoAudio? _instance;
 
   DuoAudio._internal()
       : _player = AudioPlayer(),
-        _section = Script().getSection(1) {
+        _section = Script().getSection(1),
+        currentPhraseStream = StreamController<Phrase>() {
     seekSectionTo(1);
+    _player.currentIndexStream.listen((event) {
+      if (event == null) return;
+      currentPhraseStream.add(_section.getPhrase(event));
+    });
   }
 
   factory DuoAudio() {
@@ -53,7 +62,7 @@ class DuoAudio {
     var children = _section
         .getAllPhrase()
         .map((e) =>
-        AudioSource.uri(Uri.parse('asset:///sounds/${e.phraseNumber}.mp3')))
+            AudioSource.uri(Uri.parse('asset:///sounds/${e.phraseNumber}.mp3')))
         .toList();
 
     _player.setAudioSource(
@@ -62,7 +71,5 @@ class DuoAudio {
       initialIndex: 0,
       initialPosition: Duration.zero,
     );
-
-    _player.play();
   }
 }

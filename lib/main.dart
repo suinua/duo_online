@@ -1,4 +1,5 @@
 import 'package:duo_online/duo_audio.dart';
+import 'package:duo_online/phrase.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -41,8 +42,17 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('English Text'),
-            Text('Japanese Text'),
+            StreamBuilder(
+              stream: DuoAudio().currentPhraseStream.stream,
+              builder: (BuildContext context, AsyncSnapshot<Phrase> snapshot) {
+                return Column(
+                  children: [
+                    Text(snapshot.data?.engText ?? ''),
+                    Text(snapshot.data?.jpText ?? '')
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),
