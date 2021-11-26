@@ -6,7 +6,7 @@ class Script {
   static Script? _instance;
 
   Script._internal() {
-    fetchData();
+    _fetchData();
   }
 
   factory Script() {
@@ -16,7 +16,7 @@ class Script {
 
   final List<Section> _sectionList = [];
 
-  void fetchData() {
+  void _fetchData() {
     _scriptRawData.forEach((String sectionNumberAsStr, sections) {
       var sectionNumber = int.parse(sectionNumberAsStr);
       var section = Section(sectionNumber);
